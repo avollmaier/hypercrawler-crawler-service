@@ -2,7 +2,7 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: "crawler-service"
-  description: "This is the crawler-service for the hypercrawler project!"
+  description: "This is the crawler-service for the hypercrawler project!🚀"
   annotations:
     github.com/project-slug: avollmaier/hypercrawler-crawler-service
     backstage.io/techdocs-ref: dir:.

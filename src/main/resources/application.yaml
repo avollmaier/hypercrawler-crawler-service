@@ -13,6 +13,38 @@ spring:
     name: crawler-service
   lifecycle:
     timeout-per-shutdown-phase: 15s
+  config:
+    import: 'optional:configserver:'
+  cloud:
+    config:
+      enabled: true
+      uri: ${CONFIG_SERVICE_URL:http://localhost:9001}
+      fail-fast: false
+      retry:
+        max-attempts: 20
+        max-interval: 10000
+        initial-interval: 3000
+        multiplier: 1.3
+    function:
+      definition: crawl
+    stream:
+      rabbit:
+        bindings:
+          crawl-in-0:
+            consumer:
+              max-priority: 10
+      bindings:
+        crawl-in-0:
+          destination: address-prioritized
+          group: ${spring.application.name}
+        crawl-out-0:
+          destination: address-crawled
+  rabbitmq:
+    host: hypercrawler-rabbitmq
+    port: 5672
+    username: admin
+    password: admin
+    connection-timeout: 5s
 
 logging:
   pattern:
@@ -42,3 +74,12 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${DISCOVERY_SERVICE_URL:http://localhost:9000/eureka/}
+  instance:
+    lease-expiration-duration-in-seconds: 3
+    lease-renewal-interval-in-seconds: 1
+    instance-id: ${spring.cloud.client.hostname}:${spring.application.name}:${random.value}
