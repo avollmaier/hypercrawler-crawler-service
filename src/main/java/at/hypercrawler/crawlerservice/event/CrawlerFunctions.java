@@ -1,10 +1,12 @@
 package at.hypercrawler.crawlerservice.event;
 
 import at.hypercrawler.crawlerservice.domain.service.CrawlerService;
+import com.sun.jdi.VoidType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.function.Function;
@@ -20,16 +22,18 @@ public class CrawlerFunctions {
     }
 
     @Bean
-    public Function<Flux<AddressPrioritizedMessage>, Flux<AddressCrawledMessage>> crawl() {
+    public Function<Flux<AddressPrioritizedMessage>, Mono<Void>> crawl() {
         return addressSupplyMessageFlux -> addressSupplyMessageFlux.map(addressPrioritizedMessage -> {
             log.info("Crawling address {}", addressPrioritizedMessage.address());
 
-            List<String> extractedUrls = crawlerService.crawl(addressPrioritizedMessage.address());
+            List<String> extractedUrls = crawlerService.crawl(addressPrioritizedMessage.address(), addressPrioritizedMessage.crawlerId());
             log.info("Extracted urls: {}", extractedUrls);
 
             log.info("COUNT: {}", extractedUrls.size());
-            return new AddressCrawledMessage(addressPrioritizedMessage.crawlerId(), addressPrioritizedMessage.address());
-        });
+            return Mono.empty();
+        }).then();
     }
+
+
 
 }
