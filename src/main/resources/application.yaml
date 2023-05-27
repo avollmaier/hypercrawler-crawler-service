@@ -18,11 +18,8 @@ spring:
   neo4j:
     authentication:
       username: neo4j
-      password: neo4j
-    uri: bolt://localhost:7687
-  data:
-    neo4j:
-      database: hypercrawler
+      password: password
+    uri: bolt://hypercrawler-neo4j:7687
 
   cloud:
     config:

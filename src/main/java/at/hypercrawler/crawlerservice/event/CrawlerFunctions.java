@@ -26,8 +26,7 @@ public class CrawlerFunctions {
         return addressSupplyMessageFlux -> addressSupplyMessageFlux.map(addressPrioritizedMessage -> {
             log.info("Crawling address {}", addressPrioritizedMessage.address());
 
-            List<String> extractedUrls = crawlerService.crawl(addressPrioritizedMessage.address(), addressPrioritizedMessage.crawlerId());
-            log.info("{} extracted urls: {}", extractedUrls.size(), extractedUrls);
+            crawlerService.crawl(addressPrioritizedMessage.address(), addressPrioritizedMessage.crawlerId());
 
             return Mono.empty();
         }).then();

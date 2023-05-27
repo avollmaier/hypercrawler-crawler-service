@@ -13,40 +13,33 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Set;
 
-@Builder
 @Node
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class PageNode {
-
     @Id
-    @GeneratedValue
-    Long id;
-
-    String baseUrl;
+    String url;
 
     Integer responseCode;
 
     Duration responseTime;
 
-    MediaType contentType;
+    String contentType;
 
     Long contentLength;
 
     String content;
 
+    @CreatedDate
+    Instant createdDate;
+
+    @LastModifiedDate
+    Instant lastModifiedDate;
+
     @Relationship(type = "LINKS_TO", direction = Relationship.Direction.OUTGOING)
     Set<PageNode> linksTo;
 
-    @CreatedDate
-    Instant createdAt;
-
-    @LastModifiedDate
-    Instant updatedAt;
-
-    public PageNode(String baseUrl, Integer responseCode, Duration responseTime, MediaType  contentType, Long contentLength, String content) {
-        this.baseUrl = baseUrl;
+    public PageNode(String url, Integer responseCode, Duration responseTime, String contentType, Long contentLength, String content) {
+        this.url = url;
         this.responseCode = responseCode;
         this.responseTime = responseTime;
         this.contentType = contentType;
