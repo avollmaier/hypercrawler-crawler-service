@@ -31,8 +31,6 @@ spec:
           env:
             - name: BPL_JVM_THREAD_COUNT
               value: "50"
-            - name: DISCOVERY_SERVICE_URL
-              value: http://discovery-service:9000/eureka/
             - name: CONFIG_SERVICE_URL
               value: http://config-service:9001/
           livenessProbe:

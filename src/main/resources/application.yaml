@@ -15,6 +15,15 @@ spring:
     timeout-per-shutdown-phase: 15s
   config:
     import: 'optional:configserver:'
+  neo4j:
+    authentication:
+      username: neo4j
+      password: neo4j
+    uri: bolt://localhost:7687
+  data:
+    neo4j:
+      database: hypercrawler
+
   cloud:
     config:
       enabled: true
@@ -50,6 +59,13 @@ logging:
   pattern:
     level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
 
+  level:
+    org:
+      springframework:
+        data:
+          neo4j: DEBUG
+
+
 info:
   system: hypercrawler
 
@@ -74,12 +90,3 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
-
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: ${DISCOVERY_SERVICE_URL:http://localhost:9000/eureka/}
-  instance:
-    lease-expiration-duration-in-seconds: 3
-    lease-renewal-interval-in-seconds: 1
-    instance-id: ${spring.cloud.client.hostname}:${spring.application.name}:${random.value}

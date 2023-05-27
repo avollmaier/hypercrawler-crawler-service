@@ -24,20 +24,20 @@ ext {
 }
 
 dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-neo4j'
     implementation 'org.springframework.cloud:spring-cloud-function-context'
     implementation 'org.springframework.cloud:spring-cloud-stream-binder-rabbit'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.springframework.cloud:spring-cloud-starter-config'
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
-    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
+    testImplementation 'org.testcontainers:neo4j'
     testImplementation 'org.springframework.cloud:spring-cloud-stream-test-binder'
 }
 

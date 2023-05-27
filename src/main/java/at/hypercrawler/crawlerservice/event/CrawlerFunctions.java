@@ -27,9 +27,8 @@ public class CrawlerFunctions {
             log.info("Crawling address {}", addressPrioritizedMessage.address());
 
             List<String> extractedUrls = crawlerService.crawl(addressPrioritizedMessage.address(), addressPrioritizedMessage.crawlerId());
-            log.info("Extracted urls: {}", extractedUrls);
+            log.info("{} extracted urls: {}", extractedUrls.size(), extractedUrls);
 
-            log.info("COUNT: {}", extractedUrls.size());
             return Mono.empty();
         }).then();
     }
