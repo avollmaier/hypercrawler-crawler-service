@@ -1,6 +1,5 @@
-package at.hypercrawler.crawlerservice.domain.config;
+package at.hypercrawler.crawlerservice.config;
 
-import org.springframework.boot.actuate.autoconfigure.metrics.MetricsProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;

@@ -33,6 +33,8 @@ spec:
               value: "50"
             - name: CONFIG_SERVICE_URL
               value: http://config-service:9001/
+            - name: MANAGER_SERVICE_URI
+              value: http://manager-service:9003
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness

@@ -1,12 +1,8 @@
-package at.hypercrawler.crawlerservice.domain.service;
+package at.hypercrawler.crawlerservice.crawler.domain.service.postprocess;
 
-import at.hypercrawler.crawlerservice.domain.model.PageNode;
-import at.hypercrawler.crawlerservice.domain.repository.PageNodeRepository;
+import at.hypercrawler.crawlerservice.crawler.domain.model.PageNode;
+import at.hypercrawler.crawlerservice.crawler.domain.repository.PageNodeRepository;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Mono;
-
-import java.util.UUID;
-import java.util.function.UnaryOperator;
 
 @Component
 public class GraphManager implements AbstractGraphManager {
