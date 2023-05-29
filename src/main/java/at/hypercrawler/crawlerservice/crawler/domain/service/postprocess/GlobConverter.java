@@ -7,6 +7,7 @@ import java.util.List;
 @Component
 public class GlobConverter {
 
+
     public String convertGlobsToRegex(List<String> globs) {
         StringBuilder sb = new StringBuilder();
         for (String glob : globs) {
@@ -19,6 +20,7 @@ public class GlobConverter {
     }
 
     public String convertGlobToRegex(String pattern) {
+        pattern = pattern.replaceAll("[\\<\\(\\[\\{\\\\\\^\\-\\=\\$\\!\\|\\]\\}\\)\\?\\*\\+\\.\\>]", "\\\\$0");
         StringBuilder sb = new StringBuilder(pattern.length());
         int inGroup = 0;
         int inClass = 0;

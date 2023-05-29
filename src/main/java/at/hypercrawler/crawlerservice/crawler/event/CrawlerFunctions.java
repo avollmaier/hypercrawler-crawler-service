@@ -26,7 +26,7 @@ public class CrawlerFunctions {
 
 
     @Bean
-    public Consumer<Flux<PageNode>> postProcess() {
+    public Consumer<Flux<PageNode>> process() {
         return flux -> postProcessService.consumeAddressPrefilterEvent(flux)
                 .doOnNext(e -> log.info("Consuming address postProcess event {}", e))
                 .subscribe();

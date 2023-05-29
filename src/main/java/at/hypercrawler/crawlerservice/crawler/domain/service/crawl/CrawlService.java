@@ -89,11 +89,12 @@ public class CrawlService {
     private PageNode extractPageNode(UUID crawlerId, String address, ResponseEntity<String> responseEntity) {
         List<String> extractedAddresses = addressExtractor.apply(responseEntity.getBody());
 
+
         PageNode node = new PageNode(
                 address,
                 crawlerId,
                 responseEntity.getStatusCode().value(),
-                Duration.ZERO,
+                responseEntity.getHeaders().getLastModified(),
                 Objects.requireNonNull(responseEntity.getHeaders().getContentType()).getType(),
                 responseEntity.getHeaders().getContentLength(),
                 responseEntity.getBody());
