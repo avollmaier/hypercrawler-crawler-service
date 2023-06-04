@@ -9,6 +9,8 @@ public record CrawlerConfig(
 
         String indexPrefix,
 
+        CrawlerFilterOptions filterOptions,
+
         CrawlerRequestOptions requestOptions,
 
         CrawlerRobotOptions robotOptions,

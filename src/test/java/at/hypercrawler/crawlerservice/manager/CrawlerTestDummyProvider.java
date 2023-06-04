@@ -11,12 +11,12 @@ public class CrawlerTestDummyProvider {
     public static Supplier<List<String>> startUrls =
             () -> Arrays.asList("https://www.google.com", "https://www.bing.com");
 
-    public static Supplier<List<SupportedFileType>> fileTypesToMatch =
-            () -> Arrays.asList(SupportedFileType.HTML, SupportedFileType.PDF);
+    public static Supplier<List<SupportedContentMediaType>> contentTypesToMatch =
+            () -> Arrays.asList(SupportedContentMediaType.HTML, SupportedContentMediaType.PDF);
 
 
     public static Supplier<List<String>> pathsToMatch =
-            () -> List.of("http://www.foufos.gr/**");
+            () -> List.of("http://www.foufos.gr/*");
 
 
     public static Supplier<List<String>> selectorsToMatch =
@@ -25,7 +25,7 @@ public class CrawlerTestDummyProvider {
 
     public static Supplier<CrawlerAction> crawlerAction =
             () -> CrawlerAction.builder()
-                    .fileTypesToMatch(fileTypesToMatch.get())
+                    .contentTypesToMatch(contentTypesToMatch.get())
                     .pathsToMatch(pathsToMatch.get())
                     .selectorsToMatch(selectorsToMatch.get())
                     .indexName("test_index")

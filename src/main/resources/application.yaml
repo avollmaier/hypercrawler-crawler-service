@@ -24,7 +24,7 @@ spring:
   cloud:
     config:
       enabled: true
-      uri: ${CONFIG_SERVICE_URL:http://localhost:9001}
+      uri: ${CONFIG_SERVICE_URI:http://localhost:9001}
       fail-fast: false
       retry:
         max-attempts: 20
@@ -55,13 +55,6 @@ spring:
 logging:
   pattern:
     level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
-
-  level:
-    org:
-      springframework:
-        data:
-          neo4j: DEBUG
-
 
 hypercrawler:
   crawler-service:

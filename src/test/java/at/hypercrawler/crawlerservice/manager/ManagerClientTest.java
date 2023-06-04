@@ -1,6 +1,5 @@
 package at.hypercrawler.crawlerservice.manager;
 
-
 import at.hypercrawler.crawlerservice.config.ClientProperties;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -43,41 +42,57 @@ class ManagerClientTest {
         MockResponse mockResponse = new MockResponse()
                 .addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .setBody("""
-                                {
-                                   "indexPrefix":"crawler_",
-                                   "requestOptions":{
-                                      "proxy":"http://localhost:8080",
-                                      "requestTimeout":1000,
-                                      "retries":3,
-                                      "headers":[
-                                         {
-                                            "name":"User-Agent",
-                                            "value":"Mozilla/5.0 (compatible"
-                                         }
-                                      ]
-                                   },
-                                   "robotOptions":{
-                                      "ignoreRobotRules":true,
-                                      "ignoreRobotNoIndex":true,
-                                      "ignoreRobotNoFollowTo":true
-                                   },
-                                   "actions":[
-                                      {
-                                         "indexName":"test_index",
-                                         "pathsToMatch":[
-                                            "http://www.foufos.gr/**"
-                                         ],
-                                         "selectorsToMatch":[
-                                            ".products",
-                                            "!.featured"
-                                         ],
-                                         "fileTypesToMatch":[
-                                            "HTML",
-                                            "PDF"
-                                         ]
-                                      }
-                                   ]
-                                }
+                            {
+                               "indexPrefix":"crawler_",
+                               "schedule":"0 0 0 1 1 ? 2099",
+                               "startUrls":[
+                                  "https://www.google.com",
+                                  "https://www.bing.com"
+                               ],
+                               "filterOptions":{
+                                  "siteExclusionPatterns":[
+                                     "https://www.google.com/**"
+                                  ],
+                                  "queryParameterExclusionPatterns":[
+                                     "utm_*"
+                                  ]
+                               },
+                               "requestOptions":{
+                                  "proxy":{
+                                     "host":"localhost",
+                                     "port":8080
+                                  },
+                                  "requestTimeout":1000,
+                                  "retries":3,
+                                  "headers":[
+                                     {
+                                        "name":"User-Agent",
+                                        "value":"Mozilla/5.0 (compatible"
+                                     }
+                                  ]
+                               },
+                               "robotOptions":{
+                                  "ignoreRobotRules":true,
+                                  "ignoreRobotNoIndex":true,
+                                  "ignoreRobotNoFollowTo":true
+                               },
+                               "actions":[
+                                  {
+                                     "indexName":"test_index",
+                                     "pathsToMatch":[
+                                        "http://www.foufos.gr/*"
+                                     ],
+                                     "selectorsToMatch":[
+                                        ".products",
+                                        "!.featured"
+                                     ],
+                                     "contentTypesToMatch":[
+                                        "HTML",
+                                        "PDF"
+                                     ]
+                                  }
+                               ]
+                            }
                         """);
 
         mockWebServer.enqueue(mockResponse);

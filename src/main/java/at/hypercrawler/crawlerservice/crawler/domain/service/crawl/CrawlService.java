@@ -1,5 +1,6 @@
 package at.hypercrawler.crawlerservice.crawler.domain.service.crawl;
 
+import at.hypercrawler.crawlerservice.crawler.domain.model.FunctionPayload;
 import at.hypercrawler.crawlerservice.crawler.domain.model.PageNode;
 import at.hypercrawler.crawlerservice.crawler.event.AddressPrioritizedMessage;
 import at.hypercrawler.crawlerservice.manager.CrawlerConfig;
@@ -19,6 +20,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -40,19 +42,21 @@ public class CrawlService {
         this.addressExtractor = addressExtractor;
     }
 
-    public Flux<PageNode> consumeAddressPrioritizedEvent(Flux<AddressPrioritizedMessage> flux) {
+    public Flux<FunctionPayload<PageNode>> consumeAddressPrioritizedEvent(Flux<AddressPrioritizedMessage> flux) {
         log.info("Consuming address prioritized event");
-        return flux.flatMap(e -> crawl(e.address(), e.crawlerId()));
+
+        return flux.flatMap(e -> managerClient.getCrawlerConfigById(e.crawlerId())
+                .doOnNext(config -> log.info("Crawler config for crawler {} is {}", e.crawlerId(), config))
+                .flatMap(fetchedConfig ->
+                        fetchAndExtractPage(fetchedConfig, e.address(), e.crawlerId())
+                                .map(pageNode -> new FunctionPayload<>(e.crawlerId(), fetchedConfig, pageNode))));
     }
 
 
-    public Mono<PageNode> crawl(URL address, UUID crawlerId) {
-        log.info("Crawling address {}", address);
+    private Mono<PageNode> fetchAndExtractPage(CrawlerConfig config, URL address, UUID crawlerId) {
+        log.info("Fetch and extract page address {}", address);
 
-        return managerClient.getCrawlerConfigById(crawlerId)
-                .doOnNext(config -> log.info("Crawler config for crawler {} is {}", crawlerId, config))
-                .switchIfEmpty(Mono.error(new RuntimeException("No crawler config found for crawler " + crawlerId)))
-                .flatMap(config -> fetch(config, address))
+        return fetch(config, address)
                 .doOnNext(responseEntity -> log.info("Fetched address {} with status code {}", address, responseEntity.getStatusCode()))
                 .map(e -> extractPageNode(crawlerId, address.toString(), e));
     }
@@ -66,7 +70,6 @@ public class CrawlService {
         } catch (URISyntaxException e) {
             return Mono.error(e);
         }
-
 
         HttpClient client = requestOptionHttpClient
                 .setHeaders(config.requestOptions().headers())
@@ -94,8 +97,8 @@ public class CrawlService {
                 address,
                 crawlerId,
                 responseEntity.getStatusCode().value(),
-                responseEntity.getHeaders().getLastModified(),
-                Objects.requireNonNull(responseEntity.getHeaders().getContentType()).getType(),
+                Instant.ofEpochSecond(responseEntity.getHeaders().getLastModified()),
+                Objects.requireNonNull(responseEntity.getHeaders().getContentType()),
                 responseEntity.getHeaders().getContentLength(),
                 responseEntity.getBody());
 

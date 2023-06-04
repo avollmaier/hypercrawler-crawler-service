@@ -1,5 +1,6 @@
 package at.hypercrawler.crawlerservice.crawler.domain.service.postprocess;
 
+import at.hypercrawler.crawlerservice.crawler.domain.model.FunctionPayload;
 import at.hypercrawler.crawlerservice.crawler.domain.model.PageNode;
 import at.hypercrawler.crawlerservice.crawler.domain.repository.PageNodeRepository;
 import at.hypercrawler.crawlerservice.crawler.event.AddressCrawledMessage;
@@ -10,10 +11,12 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @Service
 @Slf4j
 public class PostProcessService {
-    public static final String CRAWL_ADDRESS_OUT = "crawl-out-0";
+    public static final String CRAWL_ADDRESS_OUT = "crawlprocess-out-0";
     private final StreamBridge streamBridge;
     private final ManagerClient managerClient;
     private final PageNodeRepository pageNodeRepository;
@@ -27,25 +30,22 @@ public class PostProcessService {
         this.actionHandler = actionHandler;
     }
 
-    public Flux<PageNode> consumeAddressPrefilterEvent(Flux<PageNode> flux) {
+    public Flux<PageNode> consumeAddressPrefilterEvent(Flux<FunctionPayload<PageNode>> flux) {
         return flux.flatMap(this::postProcess);
     }
 
-    private Mono<PageNode> postProcess(PageNode pageNode) {
-        return managerClient.getCrawlerConfigById(pageNode.getCrawlerId())
-                .doOnNext(config -> log.info("Crawler config for crawler {} is {}", pageNode.getCrawlerId(), config))
-                .switchIfEmpty(Mono.error(new RuntimeException("No crawler config found for crawler " + pageNode.getCrawlerId())))
-                .flatMap(crawlerConfig -> Mono.just(actionHandler.handleActions(pageNode, crawlerConfig.actions(), crawlerConfig.indexPrefix())))
-                .map(pageNodeRepository::save)
+    private Mono<PageNode> postProcess(FunctionPayload<PageNode> event) {
+        return Mono.just(actionHandler.handleActions(event.payload(), event.config().actions(), event.config().indexPrefix()))
+                .flatMap(pageNodeRepository::save)
                 .doOnNext(this::publishAddressCrawledEvent);
-
     }
 
 
     private void publishAddressCrawledEvent(PageNode node) {
-        for (PageNode linkNode : node.getLinksTo()) {
-            AddressCrawledMessage addressSupplyMessage = new AddressCrawledMessage(node.getCrawlerId(), linkNode.getUrl());
-            streamBridge.send(CRAWL_ADDRESS_OUT, addressSupplyMessage);
-        }
+        log.info("Sending address crawled event for address {}", node.getUrl());
+        List<String> linksTo = node.getLinksTo().stream().map(PageNode::getUrl).toList();
+        AddressCrawledMessage addressSupplyMessage = new AddressCrawledMessage(node.getCrawlerId(), linksTo);
+        boolean result = streamBridge.send(CRAWL_ADDRESS_OUT, addressSupplyMessage);
+        log.info("Sending address crawled event for address {} was {}", node.getUrl(), result ? "successful" : "unsuccessful");
     }
 }

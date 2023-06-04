@@ -1,5 +1,6 @@
 package at.hypercrawler.crawlerservice.crawler.event;
 
+import at.hypercrawler.crawlerservice.crawler.domain.model.FunctionPayload;
 import at.hypercrawler.crawlerservice.crawler.domain.model.PageNode;
 import at.hypercrawler.crawlerservice.crawler.domain.service.crawl.CrawlService;
 import at.hypercrawler.crawlerservice.crawler.domain.service.postprocess.PostProcessService;
@@ -26,16 +27,16 @@ public class CrawlerFunctions {
 
 
     @Bean
-    public Consumer<Flux<PageNode>> process() {
+    public Consumer<Flux<FunctionPayload<PageNode>>> process() {
         return flux -> postProcessService.consumeAddressPrefilterEvent(flux)
-                .doOnNext(e -> log.info("Consuming address postProcess event {}", e))
+                .doOnNext(e -> log.info("Consuming address postProcess event for base address {}", e.getUrl()))
                 .subscribe();
     }
 
     @Bean
-    public Function<Flux<AddressPrioritizedMessage>, Flux<PageNode>> crawl() {
-        return crawlService::consumeAddressPrioritizedEvent;
+    public Function<Flux<AddressPrioritizedMessage>, Flux<FunctionPayload<PageNode>>> crawl() {
+        return flux -> crawlService.consumeAddressPrioritizedEvent(flux)
+                .doOnNext(e -> log.info("Consuming address crawl event for base address {}", e.payload().getUrl()));
     }
-
 
 }

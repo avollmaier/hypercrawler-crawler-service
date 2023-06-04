@@ -1,28 +1,34 @@
 package at.hypercrawler.crawlerservice.crawler.domain.model;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Value;
+import lombok.experimental.NonFinal;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
+import org.springframework.http.MediaType;
 
 import java.time.Instant;
 import java.util.*;
 
 @Node
-@Data
+@Value
+@AllArgsConstructor
 public class PageNode {
     @Id
     String url;
 
+    @NonFinal
     List<String> indices;
 
     UUID crawlerId;
 
     Integer responseCode;
 
-    Long lastModified;
+    Instant lastModifiedDateOfPage;
 
     String contentType;
 
@@ -36,22 +42,20 @@ public class PageNode {
     @LastModifiedDate
     Instant lastModifiedDate;
 
+    @NonFinal
     @Relationship(type = "LINKS_TO", direction = Relationship.Direction.OUTGOING)
     Set<PageNode> linksTo;
 
-    public PageNode(String url, UUID crawlerId) {
-        this.url = url;
-        this.crawlerId = crawlerId;
+    @NonFinal
+    @Version
+    Long version;
+
+    public PageNode(String address, UUID crawlerId, Integer value, Instant lastModifiedDateOfPage, MediaType type, Long contentLength, String body) {
+        this(address, new ArrayList<>(), crawlerId, value, lastModifiedDateOfPage, type.toString(), contentLength, body, Instant.now(), Instant.now(), new HashSet<>(), 0L);
     }
 
-    public PageNode(String address, UUID crawlerId, Integer value, Long lastModified, String type, Long contentLength, String body) {
-        this.url = address;
-        this.crawlerId = crawlerId;
-        this.responseCode = value;
-        this.lastModified = lastModified;
-        this.contentType = type;
-        this.contentLength = contentLength;
-        this.content = body;
+    public PageNode(String url, UUID crawlerId) {
+        this(url, new ArrayList<>(), crawlerId, null, null, null, null, null, Instant.now(), Instant.now(), new HashSet<>(), 0L);
     }
 
     public void addPageNode(PageNode pageNode) {
@@ -63,4 +67,10 @@ public class PageNode {
         if (this.indices == null) this.indices = new ArrayList<>();
         this.indices.add(s);
     }
+
+    public MediaType getContentType() {
+        if (this.contentType == null) return null;
+        return MediaType.valueOf(this.contentType);
+    }
+
 }

@@ -13,7 +13,7 @@ public record CrawlerAction(
 
         List<String> selectorsToMatch,
 
-        List<SupportedFileType> fileTypesToMatch
+        List<SupportedContentMediaType> contentTypesToMatch
 
 ) {
 }

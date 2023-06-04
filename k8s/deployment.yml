@@ -31,7 +31,7 @@ spec:
           env:
             - name: BPL_JVM_THREAD_COUNT
               value: "50"
-            - name: CONFIG_SERVICE_URL
+            - name: CONFIG_SERVICE_URI
               value: http://config-service:9001/
             - name: MANAGER_SERVICE_URI
               value: http://manager-service:9003
