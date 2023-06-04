@@ -1,17 +1,22 @@
 package at.hypercrawler.crawlerservice.manager;
 
-import at.hypercrawler.crawlerservice.config.ClientProperties;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import org.junit.jupiter.api.*;
+import java.io.IOException;
+import java.util.UUID;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import at.hypercrawler.crawlerservice.config.ClientProperties;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
-
-import java.io.IOException;
-import java.util.UUID;
 
 @TestMethodOrder(MethodOrderer.Random.class)
 class ManagerClientTest {
@@ -42,26 +47,26 @@ class ManagerClientTest {
         MockResponse mockResponse = new MockResponse()
                 .addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .setBody("""
-                            {
-                               "indexPrefix":"crawler_",
-                               "schedule":"0 0 0 1 1 ? 2099",
-                               "startUrls":[
-                                  "https://www.google.com",
-                                  "https://www.bing.com"
-                               ],
-                               "filterOptions":{
-                                  "siteExclusionPatterns":[
-                                     "https://www.google.com/**"
-                                  ],
-                                  "queryParameterExclusionPatterns":[
-                                     "utm_*"
-                                  ]
-                               },
-                               "requestOptions":{
-                                  "proxy":{
-                                     "host":"localhost",
-                                     "port":8080
-                                  },
+                             {
+                                "indexPrefix":"crawler_",
+                                "schedule":"0 0 0 1 1 ? 2099",
+                                "startUrls":[
+                                   "https://www.google.com",
+                                   "https://www.bing.com"
+                                ],
+                                "filterOptions":{
+                                   "siteExclusionPatterns":[
+                                      "https://www.google.com/*"
+                                   ],
+                                   "queryParameterExclusionPatterns":[
+                                      "utm_*"
+                                   ]
+                                },
+                                "requestOptions":{
+                                   "proxy":{
+                                      "host":"localhost",
+                                      "port":8080
+                                   },
                                   "requestTimeout":1000,
                                   "retries":3,
                                   "headers":[

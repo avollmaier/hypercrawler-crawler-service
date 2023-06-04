@@ -50,8 +50,8 @@ public class CrawlerTestDummyProvider {
 
     public static Supplier<CrawlerFilterOptions> filterOptions =
             () -> CrawlerFilterOptions.builder()
-                    .queryParameterExclusionPatterns(Collections.singletonList("utm_*"))
-                    .siteExclusionPatterns(Collections.singletonList("https://www.google.com/**"))
+              .queryParameterExclusionPatterns(Collections.singletonList("utm_*"))
+              .siteExclusionPatterns(Collections.singletonList("https://www.google.com/*"))
                     .build();
 
     public static Supplier<CrawlerConfig> crawlerConfig =
