@@ -24,10 +24,12 @@ import reactor.test.StepVerifier;
 import java.io.IOException;
 import java.net.URL;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ImportAutoConfiguration(TestChannelBinderConfiguration.class)
@@ -66,7 +68,7 @@ class ProcessMessageTest {
     }
 
     @Test
-    void whenProcess_thenMessageSend() throws IOException {
+    void whenProcessWithoutCrawledLinks_thenNoMessageSend() throws IOException {
         URL address = new URL("http://www.google.com");
         UUID uuid = UUID.randomUUID();
 
@@ -76,16 +78,43 @@ class ProcessMessageTest {
                 catalog.lookup(Function.class, "process");
 
 
-        Flux<FunctionPayload<PageNode>> addressSupplyMessageFlux = Flux.just(new FunctionPayload<>(uuid, CrawlerTestDummyProvider.crawlerConfig.get(), new PageNode(address.toString(), uuid, 200, Instant.now(), MediaType.TEXT_HTML, 12L, address.toString()))
+        Flux<FunctionPayload<PageNode>> addressCrawledResponse = Flux.just(new FunctionPayload<>(uuid, CrawlerTestDummyProvider.crawlerConfig.get(), new PageNode(address.toString(), uuid, 200, Instant.now(), MediaType.TEXT_HTML, 12L, address.toString()))
+        );
+
+
+        StepVerifier.create(process.apply(addressCrawledResponse))
+                .expectNextCount(0)
+                .verifyComplete();
+
+        assertNull(output.receive());
+
+    }
+
+    @Test
+    void whenProcessWithLinks_thenMessageSend() throws IOException {
+        URL address = new URL("http://www.google.com");
+        UUID uuid = UUID.randomUUID();
+
+
+        Function<Flux<FunctionPayload<PageNode>>, Flux<AddressCrawledMessage>> process =
+
+                catalog.lookup(Function.class, "process");
+
+
+        PageNode pageNode = new PageNode(address.toString(), uuid, 200, Instant.now(), MediaType.TEXT_HTML, 12L, address.toString());
+        pageNode.addPageNode(new PageNode(address.toString(), uuid));
+
+        Flux<FunctionPayload<PageNode>> addressSupplyMessageFlux = Flux.just(new FunctionPayload<>(uuid, CrawlerTestDummyProvider.crawlerConfig.get(), pageNode)
         );
 
 
         StepVerifier.create(process.apply(addressSupplyMessageFlux))
+                .expectNextCount(0)
                 .verifyComplete();
 
 
-        assertThat(objectMapper.readValue(output.receive().getPayload(), AddressPrioritizedMessage.class))
-                .isEqualTo(new AddressPrioritizedMessage(uuid, address));
+        assertThat(objectMapper.readValue(output.receive().getPayload(), AddressCrawledMessage.class))
+                .isEqualTo(new AddressCrawledMessage(uuid, List.of(address.toString())));
 
     }
 }

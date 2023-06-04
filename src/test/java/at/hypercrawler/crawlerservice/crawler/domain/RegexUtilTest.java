@@ -17,7 +17,7 @@ public class RegexUtilTest {
         List<String> regexes = null;
         Pattern result = RegexUtil.combineRegex(regexes);
 
-        assertEquals(Pattern.compile("a^"), result);
+        assertEquals(Pattern.compile("a^").pattern(), result.pattern());
     }
 
     @Test
@@ -25,7 +25,7 @@ public class RegexUtilTest {
         List<String> regexes = Collections.emptyList();
         Pattern result = RegexUtil.combineRegex(regexes);
 
-        assertEquals(Pattern.compile("a^"), result);
+        assertEquals(Pattern.compile("a^").pattern(), result.pattern());
     }
 
     @Test
@@ -33,7 +33,7 @@ public class RegexUtilTest {
         List<String> regexes = Arrays.asList("regex1", "regex2", "regex3");
         Pattern result = RegexUtil.combineRegex(regexes);
 
-        assertEquals(Pattern.compile("regex1|regex2|regex3"), result);
+        assertEquals(Pattern.compile("regex1|regex2|regex3").pattern(), result.pattern());
     }
 }
 

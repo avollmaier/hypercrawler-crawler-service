@@ -36,7 +36,7 @@ class ManagerClientTest {
     }
 
     @Test
-    void whenCrawlerExists_thenReturnStatus() {
+    void whenCrawlerExists_thenReturnConfig() {
         UUID crawlerId = UUID.randomUUID();
 
         MockResponse mockResponse = new MockResponse()

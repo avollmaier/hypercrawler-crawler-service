@@ -48,10 +48,17 @@ public class CrawlerTestDummyProvider {
                     .ignoreRobotRules(true)
                     .ignoreRobotNoIndex(true).build();
 
+    public static Supplier<CrawlerFilterOptions> filterOptions =
+            () -> CrawlerFilterOptions.builder()
+                    .queryParameterExclusionPatterns(Collections.singletonList("utm_*"))
+                    .siteExclusionPatterns(Collections.singletonList("https://www.google.com/**"))
+                    .build();
+
     public static Supplier<CrawlerConfig> crawlerConfig =
             () -> CrawlerConfig.builder()
                     .actions(Collections.singletonList(crawlerAction.get()))
                     .indexPrefix("crawler_")
+                    .filterOptions(filterOptions.get())
                     .requestOptions(crawlerRequestOptions.get())
                     .robotOptions(robotOptions.get()).build();
 }
