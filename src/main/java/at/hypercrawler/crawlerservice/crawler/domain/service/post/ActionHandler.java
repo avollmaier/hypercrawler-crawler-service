@@ -1,4 +1,4 @@
-package at.hypercrawler.crawlerservice.crawler.domain.service.postprocess;
+package at.hypercrawler.crawlerservice.crawler.domain.service.post;
 
 import at.hypercrawler.crawlerservice.crawler.domain.model.PageNode;
 import at.hypercrawler.crawlerservice.crawler.domain.util.RegexUtil;

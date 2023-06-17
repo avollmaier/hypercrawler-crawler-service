@@ -8,7 +8,6 @@ import java.util.UUID;
 public record FunctionPayload<T>(
         UUID crawlerId,
         CrawlerConfig config,
-
         T payload
 
 ) {

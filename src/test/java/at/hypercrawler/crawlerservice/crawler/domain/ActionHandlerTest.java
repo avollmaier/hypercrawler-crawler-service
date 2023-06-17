@@ -1,8 +1,7 @@
 package at.hypercrawler.crawlerservice.crawler.domain;
 
 import at.hypercrawler.crawlerservice.crawler.domain.model.PageNode;
-import at.hypercrawler.crawlerservice.crawler.domain.service.postprocess.ActionHandler;
-import at.hypercrawler.crawlerservice.crawler.domain.util.RegexUtil;
+import at.hypercrawler.crawlerservice.crawler.domain.service.post.ActionHandler;
 import at.hypercrawler.crawlerservice.manager.CrawlerAction;
 import at.hypercrawler.crawlerservice.manager.SupportedContentMediaType;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,16 +19,12 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ActionHandlerTest {
 
-    private RegexUtil regexUtil;
-
     private ActionHandler actionHandler;
 
     @BeforeEach
     public void setUp() {
         actionHandler = new ActionHandler();
     }
-
-    // Existing test methods...
 
     @Test
     public void whenPageNodeMatchesPathPattern_thenMatchesActionReturnsTrue() {

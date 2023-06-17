@@ -3,7 +3,7 @@ package at.hypercrawler.crawlerservice.crawler.event;
 import at.hypercrawler.crawlerservice.crawler.domain.model.FunctionPayload;
 import at.hypercrawler.crawlerservice.crawler.domain.model.PageNode;
 import at.hypercrawler.crawlerservice.crawler.domain.service.crawl.CrawlService;
-import at.hypercrawler.crawlerservice.crawler.domain.service.postprocess.PostProcessService;
+import at.hypercrawler.crawlerservice.crawler.domain.service.post.PostProcessService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
