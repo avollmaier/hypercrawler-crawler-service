@@ -5,7 +5,6 @@ import lombok.Value;
 import lombok.experimental.NonFinal;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.annotation.Version;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
@@ -46,16 +45,13 @@ public class PageNode {
     @Relationship(type = "LINKS_TO", direction = Relationship.Direction.OUTGOING)
     Set<PageNode> linksTo;
 
-    @NonFinal
-    @Version
-    Long version;
 
     public PageNode(String address, UUID crawlerId, Integer value, Instant lastModifiedDateOfPage, MediaType type, Long contentLength, String body) {
-        this(address, new ArrayList<>(), crawlerId, value, lastModifiedDateOfPage, type.toString(), contentLength, body, Instant.now(), Instant.now(), new HashSet<>(), 0L);
+        this(address, new ArrayList<>(), crawlerId, value, lastModifiedDateOfPage, type.toString(), contentLength, body, Instant.now(), Instant.now(), new HashSet<>());
     }
 
     public PageNode(String url, UUID crawlerId) {
-        this(url, new ArrayList<>(), crawlerId, null, null, null, null, null, Instant.now(), Instant.now(), new HashSet<>(), 0L);
+        this(url, new ArrayList<>(), crawlerId, null, null, null, null, null, Instant.now(), Instant.now(), new HashSet<>());
     }
 
     public void addPageNode(PageNode pageNode) {

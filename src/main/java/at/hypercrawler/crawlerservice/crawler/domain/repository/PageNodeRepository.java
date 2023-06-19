@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PageNodeRepository extends ReactiveNeo4jRepository<PageNode, String> {
+
 }

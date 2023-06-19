@@ -9,7 +9,6 @@ import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -59,8 +58,6 @@ class CrawlMessageTest {
         mockWebServer = new MockWebServer();
 
         WebClient.builder().baseUrl(mockWebServer.url("/").url().toString()).build();
-
-        Mockito.mock();
 
     }
 
