@@ -77,8 +77,9 @@ class ProcessMessageTest {
 
                 catalog.lookup(Function.class, "process");
 
+        PageNode pageNode = PageNode.builder().url("https://example.com").crawlerId(UUID.randomUUID()).lastModifiedDateOfPage(Instant.now()).responseCode(342).contentLength(1243L).contentType(String.valueOf(MediaType.TEXT_HTML)).content("test").build();
 
-        Flux<FunctionPayload<PageNode>> addressCrawledResponse = Flux.just(new FunctionPayload<>(uuid, CrawlerTestDummyProvider.crawlerConfig.get(), new PageNode(address.toString(), uuid, 200, Instant.now(), MediaType.TEXT_HTML, 12L, address.toString()))
+        Flux<FunctionPayload<PageNode>> addressCrawledResponse = Flux.just(new FunctionPayload<>(uuid, CrawlerTestDummyProvider.crawlerConfig.get(), pageNode)
         );
 
 
@@ -101,8 +102,8 @@ class ProcessMessageTest {
                 catalog.lookup(Function.class, "process");
 
 
-        PageNode pageNode = new PageNode(address.toString(), uuid, 200, Instant.now(), MediaType.TEXT_HTML, 12L, address.toString());
-        pageNode.addPageNode(new PageNode(address.toString(), uuid));
+        PageNode pageNode = PageNode.builder().url("https://example.com").crawlerId(UUID.randomUUID()).lastModifiedDateOfPage(Instant.now()).responseCode(342).contentLength(1243L).contentType(String.valueOf(MediaType.TEXT_HTML)).content("test").build();
+        pageNode.addPageNode(PageNode.builder().url(address.toString()).crawlerId(uuid).build());
 
         Flux<FunctionPayload<PageNode>> addressSupplyMessageFlux = Flux.just(new FunctionPayload<>(uuid, CrawlerTestDummyProvider.crawlerConfig.get(), pageNode)
         );

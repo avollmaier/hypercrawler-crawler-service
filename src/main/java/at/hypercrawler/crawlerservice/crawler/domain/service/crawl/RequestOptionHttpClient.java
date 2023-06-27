@@ -16,7 +16,7 @@ public class RequestOptionHttpClient {
 
     public RequestOptionHttpClient() {
 
-        client = HttpClient.create();
+        client = HttpClient.create().followRedirect(true);
 
     }
 
@@ -37,6 +37,7 @@ public class RequestOptionHttpClient {
         }
         return this;
     }
+
 
     public HttpClient build() {
         return client;

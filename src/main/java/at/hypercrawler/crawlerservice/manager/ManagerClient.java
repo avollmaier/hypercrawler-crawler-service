@@ -1,7 +1,6 @@
 package at.hypercrawler.crawlerservice.manager;
 
 import at.hypercrawler.crawlerservice.config.ClientProperties;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -25,7 +24,6 @@ public class ManagerClient {
     }
 
 
-    @Cacheable("crawlerConfig")
     public Mono<CrawlerConfig> getCrawlerConfigById(UUID crawlerId) {
         return webClient
                 .get()

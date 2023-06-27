@@ -6,7 +6,9 @@ import at.hypercrawler.crawlerservice.crawler.domain.repository.PageNodeReposito
 import at.hypercrawler.crawlerservice.crawler.event.AddressCrawledMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.stream.function.StreamBridge;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -35,9 +37,24 @@ public class PostProcessService {
         return Mono.just(actionHandler.handleActions(event.payload(), event.config().actions(), event.config().indexPrefix()))
                 .filter(pageNode -> pageNode.getLinksTo().size() > 0)
                 .doOnNext(this::publishAddressCrawledEvent)
-                .flatMap(pageNodeRepository::save);
+                .flatMap(this::savePageNode);
     }
 
+
+    @Transactional
+    @Retryable(Exception.class)
+    public Mono<PageNode> savePageNode(PageNode pageNode) {
+        log.info("Saving page node {}", pageNode);
+        Mono<PageNode> resultMono = pageNodeRepository
+                .save(pageNode)
+                .doOnNext(pageNode1 -> log.info("Saved page node with address {}", pageNode1.getUrl()))
+                .onErrorReturn(pageNode)
+                .doOnError(throwable -> log.error("Error while saving {}", throwable.getMessage()));
+
+        resultMono.subscribe();
+
+        return resultMono;
+    }
 
     private void publishAddressCrawledEvent(PageNode node) {
         log.info("Sending address crawled event for address {}", node.getUrl());

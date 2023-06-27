@@ -45,7 +45,7 @@ class CrawlerManagerRepositoryTest {
 
     @Test
     void whenCreatePageNode_thenPageNodeIsInDatabase() {
-        PageNode pageNode = new PageNode("fdsa", UUID.randomUUID(), 123, Instant.now(), MediaType.APPLICATION_JSON, 3241L, "fdsafdsafdasfdsaf");
+        PageNode pageNode = PageNode.builder().url("fdsa").crawlerId(UUID.randomUUID()).responseCode(123).lastModifiedDateOfPage(Instant.now()).content("fdsafdsafdasfdsaf").contentLength(3241L).contentType(String.valueOf(MediaType.APPLICATION_JSON)).build();
         StepVerifier.create(pageNodeRepository.save(pageNode)).expectNextMatches(
                 c -> c.getContentType().equals(MediaType.APPLICATION_JSON)).verifyComplete();
     }

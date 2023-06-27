@@ -1,7 +1,9 @@
 package at.hypercrawler.crawlerservice.crawler.domain.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Value;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.NonFinal;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -11,17 +13,21 @@ import org.springframework.data.neo4j.core.schema.Relationship;
 import org.springframework.http.MediaType;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Node
-@Value
+@Data
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class PageNode {
     @Id
     String url;
 
-    @NonFinal
-    List<String> indices;
+    @Builder.Default
+    List<String> indices = new ArrayList<>();
 
     UUID crawlerId;
 
@@ -41,26 +47,18 @@ public class PageNode {
     @LastModifiedDate
     Instant lastModifiedDate;
 
+    @Relationship(type = "LINKS_TO")
+    @Builder.Default
+    List<PageNode> linksTo = new ArrayList<>();
+
     @NonFinal
-    @Relationship(type = "LINKS_TO", direction = Relationship.Direction.OUTGOING)
-    Set<PageNode> linksTo;
-
-
-    public PageNode(String address, UUID crawlerId, Integer value, Instant lastModifiedDateOfPage, MediaType type, Long contentLength, String body) {
-        this(address, new ArrayList<>(), crawlerId, value, lastModifiedDateOfPage, type.toString(), contentLength, body, Instant.now(), Instant.now(), new HashSet<>());
-    }
-
-    public PageNode(String url, UUID crawlerId) {
-        this(url, new ArrayList<>(), crawlerId, null, null, null, null, null, Instant.now(), Instant.now(), new HashSet<>());
-    }
+    Long version;
 
     public void addPageNode(PageNode pageNode) {
-        if (this.linksTo == null) this.linksTo = new HashSet<>();
         this.linksTo.add(pageNode);
     }
 
     public void addIndex(String s) {
-        if (this.indices == null) this.indices = new ArrayList<>();
         this.indices.add(s);
     }
 

@@ -52,9 +52,6 @@ spring:
     password: admin
     connection-timeout: 5s
 
-logging:
-  pattern:
-    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
 
 hypercrawler:
   crawler-service:
@@ -85,3 +82,4 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
+

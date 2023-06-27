@@ -29,7 +29,7 @@ public class ActionHandlerTest {
     @Test
     public void whenPageNodeMatchesPathPattern_thenMatchesActionReturnsTrue() {
         CrawlerAction action = new CrawlerAction("action1", Collections.singletonList(".*example.com.*"), Collections.emptyList(), Collections.emptyList());
-        PageNode pageNode = new PageNode("https://example.com", UUID.randomUUID());
+        PageNode pageNode = PageNode.builder().url("https://example.com").crawlerId(UUID.randomUUID()).build();
 
         PageNode result = actionHandler.handleActions(pageNode, Collections.singletonList(action), "test_");
 
@@ -44,7 +44,7 @@ public class ActionHandlerTest {
         CrawlerAction action2 = new CrawlerAction("action2", Collections.singletonList(".*com.*"), Collections.emptyList(), Collections.emptyList());
         CrawlerAction action3 = new CrawlerAction("action2", null, Collections.emptyList(), Collections.emptyList());
 
-        PageNode pageNode = new PageNode("https://example.com", UUID.randomUUID());
+        PageNode pageNode = PageNode.builder().url("https://example.com").crawlerId(UUID.randomUUID()).build();
 
         PageNode result = actionHandler.handleActions(pageNode, Arrays.asList(action, action2, action3), "test_");
 
@@ -57,7 +57,7 @@ public class ActionHandlerTest {
     @Test
     public void whenPageNodeDoesNotMatchPathPattern_thenMatchesActionReturnsFalse() {
         CrawlerAction action = new CrawlerAction("action1", Collections.singletonList(".*example.com.*"), Collections.emptyList(), Collections.emptyList());
-        PageNode pageNode = new PageNode("https://example.at", UUID.randomUUID());
+        PageNode pageNode = PageNode.builder().url("https://example.at").crawlerId(UUID.randomUUID()).build();
 
         PageNode result = actionHandler.handleActions(pageNode, Collections.singletonList(action), "test_");
 
@@ -76,7 +76,8 @@ public class ActionHandlerTest {
     @Test
     public void whenPageNodeMatchesContentTypePattern_thenMatchesActionReturnsTrue() {
         CrawlerAction action = new CrawlerAction("action1", Collections.emptyList(), Collections.emptyList(), Collections.singletonList(SupportedContentMediaType.HTML));
-        PageNode pageNode = new PageNode("https://example.com", UUID.randomUUID(), 342, Instant.now(), MediaType.TEXT_HTML, 1243L, "test");
+        //convert to builder
+        PageNode pageNode = PageNode.builder().url("https://example.com").crawlerId(UUID.randomUUID()).lastModifiedDateOfPage(Instant.now()).responseCode(342).contentLength(1243L).contentType(String.valueOf(MediaType.TEXT_HTML)).content("test").build();
 
         PageNode result = actionHandler.handleActions(pageNode, Collections.singletonList(action), "test_");
 
@@ -88,7 +89,7 @@ public class ActionHandlerTest {
     public void whenPageNodeMatchesMultipleContentTypePattern_thenMatchesActionReturnsTrue() {
         CrawlerAction action = new CrawlerAction("action1", Collections.emptyList(), Collections.emptyList(), Collections.singletonList(SupportedContentMediaType.HTML));
         CrawlerAction action2 = new CrawlerAction("action2", Collections.emptyList(), Collections.emptyList(), Collections.singletonList(SupportedContentMediaType.HTML));
-        PageNode pageNode = new PageNode("https://example.com", UUID.randomUUID(), 342, Instant.now(), MediaType.TEXT_HTML, 1243L, "test");
+        PageNode pageNode = PageNode.builder().url("https://example.com").crawlerId(UUID.randomUUID()).lastModifiedDateOfPage(Instant.now()).responseCode(342).contentLength(1243L).contentType(String.valueOf(MediaType.TEXT_HTML)).content("test").build();
 
         PageNode result = actionHandler.handleActions(pageNode, Arrays.asList(action, action2), "test_");
 
@@ -100,7 +101,7 @@ public class ActionHandlerTest {
     @Test
     public void whenPageNodeDoesNotMatchContentTypePattern_thenMatchesActionReturnsFalse() {
         CrawlerAction action = new CrawlerAction("action1", Collections.emptyList(), Collections.emptyList(), Collections.singletonList(SupportedContentMediaType.HTML));
-        PageNode pageNode = new PageNode("https://example.com", UUID.randomUUID(), 342, Instant.now(), MediaType.APPLICATION_PDF, 1243L, "test");
+        PageNode pageNode = PageNode.builder().url("https://example.com").crawlerId(UUID.randomUUID()).lastModifiedDateOfPage(Instant.now()).responseCode(342).contentLength(1243L).contentType(String.valueOf(MediaType.MULTIPART_FORM_DATA)).content("test").build();
 
         PageNode result = actionHandler.handleActions(pageNode, List.of(action), "test_");
 
@@ -112,7 +113,7 @@ public class ActionHandlerTest {
     public void whenPageNodeMatchesSelectorPattern_thenMatchesActionReturnsTrue() {
         CrawlerAction action = new CrawlerAction("action1", Collections.emptyList(), Collections.singletonList(".*test1*"), Collections.emptyList());
 
-        PageNode pageNode = new PageNode("https://example.com", UUID.randomUUID(), 342, Instant.now(), MediaType.TEXT_HTML, 1243L, "test1");
+        PageNode pageNode = PageNode.builder().url("https://example.com").crawlerId(UUID.randomUUID()).lastModifiedDateOfPage(Instant.now()).responseCode(342).contentLength(1243L).contentType(String.valueOf(MediaType.TEXT_HTML)).content("test").build();
 
         PageNode result = actionHandler.handleActions(pageNode, Collections.singletonList(action), "test_");
 
@@ -124,7 +125,7 @@ public class ActionHandlerTest {
     public void whenPageNodeMatchesMultipleSelectorPattern_thenMatchesActionReturnsTrue() {
         CrawlerAction action = new CrawlerAction("action1", Collections.emptyList(), Collections.singletonList(".*test1*"), Collections.emptyList());
         CrawlerAction action2 = new CrawlerAction("action2", Collections.emptyList(), Collections.singletonList(".*test2*"), Collections.emptyList());
-        PageNode pageNode = new PageNode("https://example.com", UUID.randomUUID(), 342, Instant.now(), MediaType.TEXT_HTML, 1243L, "test");
+        PageNode pageNode = PageNode.builder().url("https://example.com").crawlerId(UUID.randomUUID()).lastModifiedDateOfPage(Instant.now()).responseCode(342).contentLength(1243L).contentType(String.valueOf(MediaType.TEXT_HTML)).content("test").build();
 
         PageNode result = actionHandler.handleActions(pageNode, Arrays.asList(action, action2), "test_");
 
@@ -136,7 +137,7 @@ public class ActionHandlerTest {
     @Test
     public void whenPageNodeDoesNotMatchSelectorPattern_thenMatchesActionReturnsFalse() {
         CrawlerAction action = new CrawlerAction("action1", Collections.emptyList(), Collections.singletonList(".*test1.*"), Collections.emptyList());
-        PageNode pageNode = new PageNode("https://example.at", UUID.randomUUID(), 342, Instant.now(), MediaType.TEXT_HTML, 1243L, "test");
+        PageNode pageNode = PageNode.builder().url("https://example.com").crawlerId(UUID.randomUUID()).lastModifiedDateOfPage(Instant.now()).responseCode(342).contentLength(1243L).contentType(String.valueOf(MediaType.TEXT_HTML)).content("test").build();
 
         PageNode result = actionHandler.handleActions(pageNode, Collections.singletonList(action), "test_");
 

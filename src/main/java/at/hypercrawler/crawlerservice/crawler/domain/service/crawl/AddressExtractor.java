@@ -14,6 +14,11 @@ import java.util.regex.Pattern;
 public class AddressExtractor implements Function<String, List<String>> {
     @Override
     public List<String> apply(String s) {
+        if (s == null) {
+            log.warn("Address extractor string was null. Returning empty list.");
+            return new ArrayList<>();
+        }
+
         List<String> containedUrls = new ArrayList<>();
 
         String urlRegex = "(?:(?:https?|ftp):\\/\\/|www\\.)" +

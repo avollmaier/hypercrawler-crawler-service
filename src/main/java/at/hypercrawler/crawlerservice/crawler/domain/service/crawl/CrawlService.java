@@ -6,6 +6,7 @@ import at.hypercrawler.crawlerservice.crawler.event.AddressPrioritizedMessage;
 import at.hypercrawler.crawlerservice.manager.CrawlerConfig;
 import at.hypercrawler.crawlerservice.manager.ManagerClient;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,6 @@ import java.net.URL;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -92,17 +92,16 @@ public class CrawlService {
     private PageNode extractPageNode(UUID crawlerId, String address, ResponseEntity<String> responseEntity) {
         List<String> extractedAddresses = addressExtractor.apply(responseEntity.getBody());
 
+        PageNode node = PageNode.builder()
+                .url(address).
+                crawlerId(crawlerId)
+                .responseCode(responseEntity.getStatusCode().value())
+                .lastModifiedDateOfPage(Instant.ofEpochSecond(responseEntity.getHeaders().getLastModified()))
+                .contentType(String.valueOf(responseEntity.getHeaders().getContentType() == null ? MediaType.TEXT_HTML : responseEntity.getHeaders().getContentType()))
+                .contentLength(responseEntity.getHeaders().getContentLength())
+                .content(responseEntity.getBody()).build();
 
-        PageNode node = new PageNode(
-                address,
-                crawlerId,
-                responseEntity.getStatusCode().value(),
-                Instant.ofEpochSecond(responseEntity.getHeaders().getLastModified()),
-                Objects.requireNonNull(responseEntity.getHeaders().getContentType()),
-                responseEntity.getHeaders().getContentLength(),
-                responseEntity.getBody());
-
-        extractedAddresses.forEach(e -> node.addPageNode(new PageNode(e, crawlerId)));
+        extractedAddresses.forEach(e -> node.addPageNode(PageNode.builder().crawlerId(crawlerId).url(e).build()));
 
         return node;
     }
