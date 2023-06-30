@@ -13,9 +13,7 @@ import org.springframework.data.neo4j.core.schema.Relationship;
 import org.springframework.http.MediaType;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Node
 @Data
@@ -47,9 +45,9 @@ public class PageNode {
     @LastModifiedDate
     Instant lastModifiedDate;
 
-    @Relationship(type = "LINKS_TO")
+    @Relationship(type = "LINKS_TO", direction = Relationship.Direction.OUTGOING)
     @Builder.Default
-    List<PageNode> linksTo = new ArrayList<>();
+    Set<PageNode> linksTo = new HashSet<>();
 
     @NonFinal
     Long version;

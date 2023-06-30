@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.net.URL;
 import java.util.List;
 
 @Service
@@ -44,7 +45,8 @@ public class PostProcessService {
     @Transactional
     @Retryable(Exception.class)
     public Mono<PageNode> savePageNode(PageNode pageNode) {
-        log.info("Saving page node {}", pageNode);
+        List<String> linksTo = pageNode.getLinksTo().stream().map(PageNode::getUrl).toList();
+        log.info("Saving page node with parent: {} and children: {}", pageNode.getUrl(), linksTo);
         Mono<PageNode> resultMono = pageNodeRepository
                 .save(pageNode)
                 .doOnNext(pageNode1 -> log.info("Saved page node with address {}", pageNode1.getUrl()))

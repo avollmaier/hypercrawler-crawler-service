@@ -24,7 +24,7 @@ public class ActionHandler {
             if (matchesAction(action, pageNode)) {
                 pageNode.addIndex(indexPrefix + action.indexName());
             } else {
-                log.warn("Action {} did not match for pageNode {}", action, pageNode);
+                log.warn("Action {} did not match for pageNode with parent: {}", action, pageNode.getUrl());
             }
         }
         return pageNode;
@@ -40,7 +40,6 @@ public class ActionHandler {
         if (checkSelectorToMatch(pageNode, selectorsToMatch)) return true;
         if (checkContentTypeToMatch(pageNode, action.contentTypesToMatch())) return true;
 
-        log.warn("No match found for action {} and pageNode {}", action, pageNode);
         return false;
     }
 
