@@ -36,26 +36,23 @@ public class PostProcessService {
 
     private Mono<PageNode> postProcess(FunctionPayload<PageNode> event) {
         return Mono.just(actionHandler.handleActions(event.payload(), event.config().actions(), event.config().indexPrefix()))
-                .filter(pageNode -> pageNode.getLinksTo().size() > 0)
+                .filter(pageNode -> !pageNode.getLinksTo().isEmpty())
                 .doOnNext(this::publishAddressCrawledEvent)
                 .flatMap(this::savePageNode);
     }
 
 
     @Transactional
-    @Retryable(Exception.class)
+    @Retryable
     public Mono<PageNode> savePageNode(PageNode pageNode) {
         List<String> linksTo = pageNode.getLinksTo().stream().map(PageNode::getUrl).toList();
         log.info("Saving page node with parent: {} and children: {}", pageNode.getUrl(), linksTo);
-        Mono<PageNode> resultMono = pageNodeRepository
+
+        return pageNodeRepository
                 .save(pageNode)
                 .doOnNext(pageNode1 -> log.info("Saved page node with address {}", pageNode1.getUrl()))
                 .onErrorReturn(pageNode)
                 .doOnError(throwable -> log.error("Error while saving {}", throwable.getMessage()));
-
-        resultMono.subscribe();
-
-        return resultMono;
     }
 
     private void publishAddressCrawledEvent(PageNode node) {
