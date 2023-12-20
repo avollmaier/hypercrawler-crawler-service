@@ -52,7 +52,7 @@ jobs:
           output: 'trivy-results-source-code.sarif'
 
       - name: Upload vulnerability report
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         if: success() || failure()
         with:
           sarif_file: 'trivy-results-source-code.sarif'
@@ -96,7 +96,7 @@ jobs:
           format: 'sarif'
           output: 'trivy-results-oci-image.sarif'
       - name: Upload vulnerability report
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         if: success() || failure()
         with:
           sarif_file: 'trivy-results-oci-image.sarif'
