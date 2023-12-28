@@ -92,7 +92,7 @@ class ProcessMessageTest {
     }
 
     @Test
-    void whenProcessWithLinks_thenMessageSend() throws IOException {
+    void whenProcessWithLinks_thenMessageSend() throws IOException, InterruptedException {
         URL address = new URL("http://www.google.com");
         UUID uuid = UUID.randomUUID();
 
@@ -113,6 +113,8 @@ class ProcessMessageTest {
                 .expectNextCount(0)
                 .verifyComplete();
 
+
+        Thread.sleep(5000);
 
         assertThat(objectMapper.readValue(output.receive().getPayload(), AddressCrawledMessage.class))
                 .isEqualTo(new AddressCrawledMessage(uuid, List.of(address.toString())));

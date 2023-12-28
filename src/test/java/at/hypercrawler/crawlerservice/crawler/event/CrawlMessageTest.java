@@ -11,10 +11,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.function.context.FunctionCatalog;
 import org.springframework.cloud.function.context.test.FunctionalSpringBootTest;
 import org.springframework.cloud.stream.binder.test.OutputDestination;
+import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.testcontainers.shaded.com.google.common.net.HttpHeaders;
@@ -35,7 +37,7 @@ import static org.mockito.Mockito.when;
 
 
 @FunctionalSpringBootTest
-@AutoConfiguration
+@ImportAutoConfiguration(TestChannelBinderConfiguration.class)
 class CrawlMessageTest {
 
     @MockBean
@@ -45,9 +47,6 @@ class CrawlMessageTest {
 
     @Autowired
     private FunctionCatalog catalog;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
 
     @Autowired
