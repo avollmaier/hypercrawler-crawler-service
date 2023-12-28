@@ -64,7 +64,6 @@ class CrawlMessageTest {
     void whenPrioritizeWithRunningCrawler_thenMessageSend() throws IOException {
 
         URL address = mockWebServer.url("/").url();
-        URL expectedFoundAddress = new URL("http://www.orf.at");
         UUID uuid = UUID.randomUUID();
         int responseCode = 200;
         ZonedDateTime zonedDateTime = ZonedDateTime.now();
@@ -75,7 +74,7 @@ class CrawlMessageTest {
         mockWebServer.enqueue(
                 new MockResponse().setResponseCode(responseCode)
                         .setHeader(HttpHeaders.CONTENT_TYPE, mediaType)
-                        .setBody(expectedFoundAddress.toString())
+                        .setBody("<a href=\"https://www.orf.at\">ORF</a><a href=\"../bilder\">ORF</a>")
                         .setHeader(HttpHeaders.LAST_MODIFIED, zonedDateTime)
         );
 
@@ -89,9 +88,9 @@ class CrawlMessageTest {
                     assertEquals(uuid, pageNodeFunctionPayload.payload().getCrawlerId());
                     assertEquals(responseCode, pageNodeFunctionPayload.payload().getResponseCode());
                     assertEquals(mediaType, pageNodeFunctionPayload.payload().getContentType());
-                    assertEquals(17L, pageNodeFunctionPayload.payload().getContentLength());
-                    assertEquals(expectedFoundAddress.toString(), pageNodeFunctionPayload.payload().getContent());
-                    assertEquals(1, pageNodeFunctionPayload.payload().getLinksTo().size());
+                    assertEquals(63L, pageNodeFunctionPayload.payload().getContentLength());
+                    assertEquals("<a href=\"https://www.orf.at\">ORF</a><a href=\"../bilder\">ORF</a>", pageNodeFunctionPayload.payload().getContent());
+                    assertEquals(2, pageNodeFunctionPayload.payload().getLinksTo().size());
                 })
                 .verifyComplete();
     }

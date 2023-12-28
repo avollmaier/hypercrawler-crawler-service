@@ -1,40 +1,39 @@
 package at.hypercrawler.crawlerservice.crawler.domain.service.crawl;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
-
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.springframework.stereotype.Component;
 
 @Component
-@Slf4j
-public class AddressExtractor implements Function<String, List<String>> {
-    @Override
-    public List<String> apply(String s) {
-        if (s == null) {
-            log.warn("Address extractor string was null. Returning empty list.");
-            return new ArrayList<>();
-        }
-
+public class AddressExtractor {
+    public List<String> extract(String htmlContent, String baseUrl) {
         List<String> containedUrls = new ArrayList<>();
 
-        String urlRegex = "(?:(?:https?|ftp):\\/\\/|www\\.)" +
-                "[\\w\\d\\-_]+(?:\\.[\\w\\d\\-_]+)" +
-                "[\\w\\d\\-\\.,@?^=%&amp;:/~\\+#]*" +
-                "[\\w\\d\\-\\@?^=%&amp;/~\\+#]";
+        Document doc = Jsoup.parse(htmlContent, baseUrl);
+        Elements links = doc.select("a[href]");
 
-        Pattern pattern = Pattern.compile(urlRegex, Pattern.CASE_INSENSITIVE);
-        Matcher urlMatcher = pattern.matcher(s);
-
-        while (urlMatcher.find()) {
-            containedUrls
-                    .add(s.substring(urlMatcher.start(0), urlMatcher.end(0)));
+        for (Element link : links) {
+            String url = link.attr("abs:href");
+            if (isResolvable(url)) {
+                containedUrls.add(url);
+            }
         }
 
-        log.info("Found {} urls in {} characters", containedUrls.size(), s.length());
         return containedUrls;
+    }
+
+    private boolean isResolvable(String url) {
+        try {
+            new URI(url);
+            return true;
+        } catch (URISyntaxException e) {
+            return false;
+        }
     }
 }

@@ -25,6 +25,7 @@ ext {
 }
 
 dependencies {
+    implementation 'org.jsoup:jsoup:1.17.1'
     implementation 'com.github.crawler-commons:crawler-commons:1.4'
     testImplementation 'org.testcontainers:junit-jupiter'
     implementation 'org.springframework.boot:spring-boot-starter-data-neo4j'
@@ -62,7 +63,14 @@ tasks.named('jar') {
 
 tasks.named('bootBuildImage') {
     builder = 'paketobuildpacks/builder:base'
-    environment = ['BP_LIVE_RELOAD_ENABLED': 'true']
+
+    if(System.getenv('NATIVE_IMAGE_ENABLED') == 'enabled'){
+        println("bootBuildImage is building a native image")
+        environment = ['BP_NATIVE_IMAGE': 'true']
+    }else {
+        environment = ['BP_LIVE_RELOAD_ENABLED': 'true']
+    }
+
     imageName = "${project.name}"
 
     docker {
@@ -73,3 +81,4 @@ tasks.named('bootBuildImage') {
         }
     }
 }
+

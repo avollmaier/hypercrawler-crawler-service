@@ -83,14 +83,14 @@ public class CrawlService {
                 .retrieve()
                 .toEntity(String.class)
                 .timeout(Duration.ofMillis(config.requestOptions().requestTimeout()), Mono.empty())
-                .onErrorResume(WebClientResponseException.NotFound.class, exception -> Mono.empty())
+                .onErrorResume(Exception.class, exception -> Mono.empty())
                 .retryWhen(Retry.backoff(config.requestOptions().retries(), Duration.ofMillis(config.requestOptions().requestTimeout())))
                 .onErrorResume(Exception.class, exception -> Mono.empty());
 
     }
 
     private PageNode extractPageNode(UUID crawlerId, String address, ResponseEntity<String> responseEntity) {
-        List<String> extractedAddresses = addressExtractor.apply(responseEntity.getBody());
+        List<String> extractedAddresses = addressExtractor.extract(responseEntity.getBody(), address);
 
         PageNode node = PageNode.builder()
                 .url(address).
