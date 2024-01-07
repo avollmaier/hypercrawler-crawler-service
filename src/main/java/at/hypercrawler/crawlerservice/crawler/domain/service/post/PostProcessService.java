@@ -28,7 +28,7 @@ public class PostProcessService {
 
   @Transactional
   public Flux<AddressCrawledMessage> consumeAddressCrawledEvent(Flux<FunctionPayload<PageNode>> flux) {
-    return flux.flatMap(this::postProcess).doOnNext(e -> log.error("HII Alois"));
+    return flux.flatMap(this::postProcess);
   }
 
   private Mono<AddressCrawledMessage> postProcess(FunctionPayload<PageNode> event) {
