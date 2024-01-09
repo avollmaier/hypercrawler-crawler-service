@@ -15,6 +15,10 @@ public class AddressExtractor {
     public List<String> extract(String htmlContent, String baseUrl) {
         List<String> containedUrls = new ArrayList<>();
 
+        if (htmlContent == null || htmlContent.isEmpty()) {
+            return containedUrls;
+        }
+
         Document doc = Jsoup.parse(htmlContent, baseUrl);
         Elements links = doc.select("a[href]");
 
