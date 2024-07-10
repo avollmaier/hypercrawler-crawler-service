@@ -25,7 +25,7 @@ ext {
 }
 
 dependencies {
-    implementation 'org.jsoup:jsoup:1.17.1'
+    implementation 'org.jsoup:jsoup:1.18.1'
     implementation 'com.github.crawler-commons:crawler-commons:1.4'
     testImplementation 'org.testcontainers:junit-jupiter'
     implementation 'org.springframework.boot:spring-boot-starter-data-neo4j'
